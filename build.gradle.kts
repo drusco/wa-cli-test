@@ -19,9 +19,15 @@ repositories {
 
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter")
+	implementation("com.fasterxml.jackson.core:jackson-databind")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+}
+
+tasks.withType<Jar> {
+    archiveFileName.set("cli.jar")
+    destinationDirectory.set(file("${project.rootDir}"))
 }
 
 tasks.withType<Test> {

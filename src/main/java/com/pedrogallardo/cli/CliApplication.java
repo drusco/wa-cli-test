@@ -75,10 +75,10 @@ public class CliApplication implements CommandLineRunner {
         File jsonFile = new File("dicts/data.json");
 
         ObjectMapper objectMapper = new ObjectMapper();
-        Map<?, ?> jsonData = objectMapper.readValue(jsonFile, Map.class);
+        
+		Data jsonData = objectMapper.readValue(jsonFile, Data.class);
 
-        if (verbose) {
-            System.out.println("JSON: " + jsonData);
-        }
+		List<Item> data = jsonData.getData();
+
     }
 }

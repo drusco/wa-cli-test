@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Arrays;
 import java.util.List;
+import java.util.HashMap;
+import java.util.ArrayList;
 
 @SpringBootApplication
 public class CliApplication implements CommandLineRunner {
@@ -80,5 +82,29 @@ public class CliApplication implements CommandLineRunner {
 
 		List<Item> data = jsonData.getData();
 
+		Map<String, Integer> results = new HashMap<>();
+
+		List<String> path = new ArrayList<>();
+
+		traverseData(data, path);
+
     }
+
+	private void traverseData(List<Item> items, List<String> path) {
+		System.out.println("\n\rpath: " + path);
+		for (Item item : items) {
+			String name = item.getName();
+			List<Item> children = item.getItems();
+
+			System.out.println("\n\r-" + name);
+
+			if (children != null && !children.isEmpty()) {
+				List<String> currentPath = new ArrayList<>(path);
+				currentPath.add(name);
+				traverseData(children, currentPath);
+			}
+		}
+	}
+
+
 }

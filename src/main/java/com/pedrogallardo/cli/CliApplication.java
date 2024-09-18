@@ -38,6 +38,7 @@ public class CliApplication implements CommandLineRunner {
     }
 
 	private void analyze(String... args) throws IOException {
+		long startTime = System.currentTimeMillis();
         int depth = 1;
         boolean verbose = false;
         String phrase = null;
@@ -75,9 +76,7 @@ public class CliApplication implements CommandLineRunner {
             return;
         }
 
-        System.out.println("Phrase: " + phrase);
-        System.out.println("Depth: " + depth);
-        System.out.println("Verbose: " + verbose);
+		long paramsTime = System.currentTimeMillis() - startTime;
 
         File jsonFile = new File("dicts/data.json");
 
@@ -87,10 +86,28 @@ public class CliApplication implements CommandLineRunner {
 
 		List<Item> data = jsonData.getData();
 
+		long resultStartTime = System.currentTimeMillis();
+
 		Map<String, Integer> results = traverseData(data, depth, phrase);
 
-		for (Map.Entry<String, Integer> entry : results.entrySet()) {
-			System.out.println(entry.getKey() + " = " + entry.getValue());
+		long resultTime = System.currentTimeMillis() - resultStartTime;
+
+		System.out.println("\n\r");
+
+		if (results.isEmpty()) {
+			System.out.println("0");
+		} else {
+			for (Map.Entry<String, Integer> entry : results.entrySet()) {
+				System.out.println(entry.getKey() + " = " + entry.getValue() + ";");
+			}
+		}
+
+		if (verbose) {
+			System.out.println("\n\r");
+			
+			System.out.printf("%-40s %s%n", "Tempo de carregamento dos parâmetros", paramsTime + "ms");
+			System.out.printf("%-40s %s%n", "Tempo de verificação da frase", resultTime + "ms");
+			System.out.println("\n\r");
 		}
 
     }

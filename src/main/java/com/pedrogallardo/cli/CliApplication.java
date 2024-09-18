@@ -89,25 +89,26 @@ public class CliApplication implements CommandLineRunner {
 
 		Map<String, Integer> results = new HashMap<>();
 
-		traverseData(data, depth);
+		traverseData(data, depth, phrase);
 
     }
 
-	private void traverseData(List<Item> items, int depth) {
+	private void traverseData(List<Item> items, int depth, String phrase) {
 		List<String> path = new ArrayList<>();
-		traverseData(items, depth, path);
+		traverseData(items, path, depth, phrase);
 	}
 
-	private void traverseData(List<Item> items, int depth, List<String> path) {
+	private void traverseData(List<Item> items, List<String> path, int depth, String phrase) {
 
 		int pathSize = path.size();
+		String phraseLowercase = phrase.toLowerCase();
 
 		System.out.println("\n\rpath: " + pathSize + ", " + path);
 		for (Item item : items) {
 			String name = item.getName();
 			List<Item> children = item.getItems();
 
-			if (pathSize >= depth) {
+			if (pathSize >= depth && phraseLowercase.contains(name.toLowerCase())) {
 
 				String pathName = path.get(depth-1);
 
@@ -120,7 +121,7 @@ public class CliApplication implements CommandLineRunner {
 			if (children != null && !children.isEmpty()) {
 				List<String> currentPath = new ArrayList<>(path);
 				currentPath.add(name);
-				traverseData(children, depth, currentPath);
+				traverseData(children, currentPath, depth, phrase);
 			}
 		}
 	}

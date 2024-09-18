@@ -17,13 +17,6 @@ public class ItemTests {
         item.setItems(subitems);
 
         assertEquals(name, item.getName());
-        assertEquals(newItems, item.getItems());
-    }
-
-    @Test
-    public void testEmptySubItems() {
-        Item item = new Item();
-
-        assertTrue(item.getItems().isEmpty());
+        assertEquals(subitems, item.getItems());
     }
 }

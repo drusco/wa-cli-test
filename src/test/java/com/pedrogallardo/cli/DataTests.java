@@ -26,8 +26,15 @@ public class DataTests {
     @Test
     public void testSetDataAndGetData() {
         List<Item> testData = new ArrayList<>();
-        testData.add(new Item("Item1", new ArrayList<>()));
-        testData.add(new Item("Item2", new ArrayList<>()));
+
+        Item item1 = new Item();
+        Item item2 = new Item();
+
+        item1.setName("Item1");
+        item2.setName("Item2");
+
+        testData.add(item1);
+        testData.add(item2);
 
         data.setData(testData);
 

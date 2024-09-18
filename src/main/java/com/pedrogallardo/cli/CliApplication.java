@@ -16,10 +16,23 @@ import java.util.ArrayList;
 @SpringBootApplication
 public class CliApplication implements CommandLineRunner {
 
+	private Data data;
 	private static final List<String> VALID_ACTIONS = Arrays.asList("analyze");
 
 	public static void main(String[] args) {
 		SpringApplication.run(CliApplication.class, args);
+	}
+
+	public void setData(Data data) {
+		this.data = data;
+	}
+
+	public CliApplication() throws IOException {
+		File jsonFile = new File("dicts/data.json");
+		ObjectMapper objectMapper = new ObjectMapper();
+		Data jsonData = objectMapper.readValue(jsonFile, Data.class);
+
+		this.setData(jsonData);
 	}
 
 	@Override
@@ -37,7 +50,7 @@ public class CliApplication implements CommandLineRunner {
         }
     }
 
-	private void analyze(String... args) throws IOException {
+	public void analyze(String... args) throws IOException {
 		long startTime = System.currentTimeMillis();
         int depth = 1;
         boolean verbose = false;
@@ -67,7 +80,7 @@ public class CliApplication implements CommandLineRunner {
         }
 
 		if (depth < 1) {
-			System.err.println("Depth should not be less than 1");
+			System.err.println("Depth should not be less than 1.");
             return;
 		}
 
@@ -77,38 +90,31 @@ public class CliApplication implements CommandLineRunner {
         }
 
 		long paramsTime = System.currentTimeMillis() - startTime;
-
-        File jsonFile = new File("dicts/data.json");
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        
-		Data jsonData = objectMapper.readValue(jsonFile, Data.class);
-
-		List<Item> data = jsonData.getData();
-
 		long resultStartTime = System.currentTimeMillis();
+
+		List<Item> data = this.data.getData();
 
 		Map<String, Integer> results = traverseData(data, depth, phrase);
 
 		long resultTime = System.currentTimeMillis() - resultStartTime;
 
-		System.out.println("\n\r");
+		System.out.println("");
 
 		if (results.isEmpty()) {
-			System.out.println("0");
+			System.out.print("0");
 		} else {
 			for (Map.Entry<String, Integer> entry : results.entrySet()) {
-				System.out.println(entry.getKey() + " = " + entry.getValue() + ";");
+				System.out.print(entry.getKey() + " = " + entry.getValue() + "; ");
 			}
 		}
 
 		if (verbose) {
 			System.out.println("\n\r");
-			
 			System.out.printf("%-40s %s%n", "Tempo de carregamento dos parâmetros", paramsTime + "ms");
 			System.out.printf("%-40s %s%n", "Tempo de verificação da frase", resultTime + "ms");
-			System.out.println("\n\r");
 		}
+
+		System.out.println("\n\r");
 
     }
 

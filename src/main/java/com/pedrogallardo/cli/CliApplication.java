@@ -65,6 +65,11 @@ public class CliApplication implements CommandLineRunner {
             }
         }
 
+		if (depth < 1) {
+			System.err.println("Depth should not be less than 1");
+            return;
+		}
+
         if (phrase == null) {
             System.err.println("Phrase is required.");
             return;
@@ -103,7 +108,10 @@ public class CliApplication implements CommandLineRunner {
 			List<Item> children = item.getItems();
 
 			if (pathSize >= depth) {
-				System.out.println("\n\r- (**) " + name);
+
+				String pathName = path.get(depth-1);
+
+				System.out.println("\n\r- (**) " + "[" + pathName + "]" + name);
 			} else {
 				System.out.println("\n\r-" + name);
 			}

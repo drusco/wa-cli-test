@@ -30,7 +30,7 @@ java -jar cli.jar analyze –depth <n> –verbose (optional) “{phrase}”
 
 ### Formato do JSON
 
-O arquivo dicts/data.json tem uma única propriedade chamada `**data**`, e essa propriedade é um `**Array<Item>**`.
+O arquivo dicts/data.json tem uma única propriedade chamada `**data**`, e essa propriedade é um `**Array<Item>**`
 
 ```
 {
@@ -43,29 +43,30 @@ O arquivo dicts/data.json tem uma única propriedade chamada `**data**`, e essa 
 }
 ```
 
----
-
 ### Exemplos
 
 *   Exemplo 1: Possui uma correspondência e está utilizando todos os parâmetros.
 
 ```
-comando: java -jar cli.jar analyze --depth 2 "Eu amo papagaios" --verbose
-output: Aves = 1
+java -jar cli.jar analyze --depth 2 "Eu amo papagaios" --verbose
 ```
+
+output: Aves = 1
 
 *   Exemplo 2: Possui duas correspondências.
 
 ```
-comando: java -jar cli.jar analyze --depth 3 "Eu vi gorilas e papagaios"
-output: Pássaros = 1; Primatas = 1;
+java -jar cli.jar analyze --depth 3 "Eu vi gorilas e papagaios"
 ```
+
+output: Pássaros = 1; Primatas = 1;
 
 *   Exemplo 3: Não possui correspondência.
 
 ```
-comando: java -jar cli.jar analyze --depth 5 "Eu tenho preferência por animais carnívoros"
-output: 0;
+java -jar cli.jar analyze --depth 5 "Eu tenho preferência por animais carnívoros"
 ```
+
+output: 0;
 
 Na frase não existe nenhum filho do nível 5 e nem o nível 5 possui os termos especificados.

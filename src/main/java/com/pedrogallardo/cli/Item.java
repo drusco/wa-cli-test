@@ -6,6 +6,11 @@ public class Item {
     private String name;
     private List<Item> items;
 
+    public Item(String name, List<Item> items) {
+        this.name = name;
+        this.items = items;
+    }
+
     public String getName() {
         return name;
     }

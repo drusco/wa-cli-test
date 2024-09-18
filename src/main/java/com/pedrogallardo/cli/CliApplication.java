@@ -50,7 +50,7 @@ public class CliApplication implements CommandLineRunner {
         }
     }
 
-	public void analyze(String... args) throws IOException {
+	private void analyze(String... args) throws IOException {
 		long startTime = System.currentTimeMillis();
         int depth = 1;
         boolean verbose = false;

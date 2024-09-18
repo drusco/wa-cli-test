@@ -2,6 +2,7 @@ package com.pedrogallardo.cli;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -19,7 +20,9 @@ public class CliApplicationTests {
 	private List<Item> jsonData;
 	private final ObjectMapper objectMapper = new ObjectMapper();
 	private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-    private final PrintStream originalOut = System.out;
+	private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
+	private final PrintStream originalOut = System.out;
+	private final PrintStream originalErr = System.err;
 	private final String jsonString = """
         {
             "data": [
@@ -61,14 +64,21 @@ public class CliApplicationTests {
 
 	@BeforeEach
     public void setUp() throws IOException {
-		Data data = objectMapper.readValue(jsonString, Data.class);
-
 		System.setOut(new PrintStream(outContent));
+		System.setErr(new PrintStream(errContent));
+
+		Data data = objectMapper.readValue(jsonString, Data.class);
 
 		cliApp = new CliApplication();
 
 		cliApp.setData(data);
 		
+	}
+
+	@AfterEach
+	public void cleanUp() {
+		System.setOut(originalOut);
+		System.setErr(originalErr);
 	}
 
     @Test
@@ -86,7 +96,7 @@ public class CliApplicationTests {
     void testAnalyzeAction() throws IOException {
         String[] args = {"analyze", "--depth", "2", "Deep3"};
 
-        cliApp.analyze(args);
+        cliApp.run(args);
 
 		String output = outContent.toString();
 
@@ -94,12 +104,12 @@ public class CliApplicationTests {
     }
 
     @Test
-    void testAnalyzeLargePhrase() throws IOException {
+    void testLargePhrase() throws IOException {
         String longPhrase = "a".repeat(5000) + "Deep3 Deep1.";
 
         String[] args = {"analyze", "--depth", "2", longPhrase};
 
-        cliApp.analyze(args);
+        cliApp.run(args);
 
 		String output = outContent.toString();
 
@@ -119,11 +129,11 @@ public class CliApplicationTests {
 		assertEquals("0", output.trim(), "Output is 0");
     }
 
-    // @Test
-    void testAnalyzeDefaultDepthAndVerbose() throws IOException {
+    @Test
+    void testDefaultDepthAndVerbose() throws IOException {
         String[] args = {"analyze", "--verbose", "Sub1"};
 
-        cliApp.analyze(args);
+        cliApp.run(args);
 
 		String output = outContent.toString();
 
@@ -132,36 +142,36 @@ public class CliApplicationTests {
 		assertTrue(output.contains("Item1 = 1;"));
     }
 
-	// @Test
-    void testAnalyzeInvalidDepth() throws IOException {
-        String[] args = {"analyze", "--depth", "NO", "teste"};
+	@Test
+    void testDepthIsInvalid() throws IOException {
+        String[] args = {"analyze", "--depth", "?", "teste"};
 
         cliApp.run(args);
 
-		String output = outContent.toString();
+		String errorOutput = errContent.toString();
 
-		assertTrue(output.contains("Invalid depth value."));
+		assertTrue(errorOutput.contains("Invalid depth value."));
     }
 
-	// @Test
-    void testAnalyzeDepthLessThanOne() throws IOException {
+	@Test
+    void testDepthIsLessThanOne() throws IOException {
         String[] args = {"analyze", "--depth", "-1", "teste"};
 
-        cliApp.analyze(args);
+        cliApp.run(args);
 
-		String output = outContent.toString();
+		String errorOutput = errContent.toString();
 
-		assertTrue(output.contains("Depth should not be less than 1."));
+		assertTrue(errorOutput.contains("Depth should not be less than 1."));
     }
 
-	// @Test
-    void testAnalyzeUndefinedPhrase() throws IOException {
+	@Test
+    void testUndefinedPhrase() throws IOException {
         String[] args = {"analyze"};
 
-        cliApp.analyze(args);
+        cliApp.run(args);
 
-		String output = outContent.toString();
+		String errorOutput = errContent.toString();
 
-		assertTrue(output.contains("Phrase is required."));
+		assertTrue(errorOutput.contains("Phrase is required."));
     }
 }

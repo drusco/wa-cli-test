@@ -84,24 +84,35 @@ public class CliApplication implements CommandLineRunner {
 
 		Map<String, Integer> results = new HashMap<>();
 
-		List<String> path = new ArrayList<>();
-
-		traverseData(data, path);
+		traverseData(data, depth);
 
     }
 
-	private void traverseData(List<Item> items, List<String> path) {
-		System.out.println("\n\rpath: " + path);
+	private void traverseData(List<Item> items, int depth) {
+		List<String> path = new ArrayList<>();
+		traverseData(items, depth, path);
+	}
+
+	private void traverseData(List<Item> items, int depth, List<String> path) {
+
+		int pathSize = path.size();
+
+		System.out.println("\n\rpath: " + pathSize + ", " + path);
 		for (Item item : items) {
 			String name = item.getName();
 			List<Item> children = item.getItems();
 
-			System.out.println("\n\r-" + name);
+			if (pathSize >= depth) {
+				System.out.println("\n\r- (**) " + name);
+			} else {
+				System.out.println("\n\r-" + name);
+			}
+
 
 			if (children != null && !children.isEmpty()) {
 				List<String> currentPath = new ArrayList<>(path);
 				currentPath.add(name);
-				traverseData(children, currentPath);
+				traverseData(children, depth, currentPath);
 			}
 		}
 	}

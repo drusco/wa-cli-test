@@ -87,23 +87,26 @@ public class CliApplication implements CommandLineRunner {
 
 		List<Item> data = jsonData.getData();
 
-		Map<String, Integer> results = new HashMap<>();
+		Map<String, Integer> results = traverseData(data, depth, phrase);
 
-		traverseData(data, depth, phrase);
+		for (Map.Entry<String, Integer> entry : results.entrySet()) {
+			System.out.println(entry.getKey() + " = " + entry.getValue());
+		}
 
     }
 
-	private void traverseData(List<Item> items, int depth, String phrase) {
+	private Map<String, Integer> traverseData(List<Item> items, int depth, String phrase) {
 		List<String> path = new ArrayList<>();
-		traverseData(items, path, depth, phrase);
+		Map<String, Integer> results = new HashMap<>();
+
+		return traverseData(items, path, results, depth, phrase);
 	}
 
-	private void traverseData(List<Item> items, List<String> path, int depth, String phrase) {
+	private Map<String, Integer> traverseData(List<Item> items, List<String> path, Map<String, Integer> results, int depth, String phrase) {
 
 		int pathSize = path.size();
 		String phraseLowercase = phrase.toLowerCase();
 
-		System.out.println("\n\rpath: " + pathSize + ", " + path);
 		for (Item item : items) {
 			String name = item.getName();
 			List<Item> children = item.getItems();
@@ -111,19 +114,18 @@ public class CliApplication implements CommandLineRunner {
 			if (pathSize >= depth && phraseLowercase.contains(name.toLowerCase())) {
 
 				String pathName = path.get(depth-1);
+				results.put(pathName, results.getOrDefault(pathName, 0) + 1);
 
-				System.out.println("\n\r- (**) " + "[" + pathName + "]" + name);
-			} else {
-				System.out.println("\n\r-" + name);
 			}
-
 
 			if (children != null && !children.isEmpty()) {
 				List<String> currentPath = new ArrayList<>(path);
 				currentPath.add(name);
-				traverseData(children, currentPath, depth, phrase);
+				traverseData(children, currentPath, results, depth, phrase);
 			}
 		}
+
+		return results;
 	}
 
 
